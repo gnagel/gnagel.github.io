@@ -18,8 +18,7 @@
          <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
          
          <guid>https://gnagel.github.io/posts/2020-12-29-git-porcelain/</guid>
-         <description>&lt;h2 id=&#34;setting-up-a-new-blog&#34;&gt;Setting up a new blog&lt;/h2&gt;
-&lt;p&gt;For this blog I&amp;rsquo;m using Github Pages for the hosting and to use the Github Actions for CI/CD and publish workflows.&lt;/p&gt;
+         <description>&lt;p&gt;For this blog I&amp;rsquo;m using Github Pages for the hosting and to use the Github Actions for CI/CD and publish workflows.&lt;/p&gt;
 &lt;p&gt;However, I quickly bumped into some annoying issues with Github Actions: non-content changes resulted in a failed build.&lt;/p&gt;
 &lt;p&gt;At first my &lt;code&gt;Makefile&lt;/code&gt; looked like this:&lt;/p&gt;
 &lt;ol&gt;
@@ -42,7 +41,6 @@ setup:
 ## Hugo uses submodules for the themes, and I&#39;ll also use it for the publish workflows too
 modules:
     git config pull.rebase true
-    ls public 2&amp;gt; /dev/null || git submodule add https://github.com/gnagel/gnagel.github.io.git public
     ls themes/kiera 2&amp;gt; /dev/null || git submodule add https://github.com/avianto/hugo-kiera.git themes/kiera
     # ...
 
@@ -53,12 +51,16 @@ modules:
 dev: modules
     hugo server --port=1313
 
-publish: modules
-    hugo
-    cd public
-    git add -A
-    git commit -am &amp;quot;Publish site $(DATE)&amp;quot;
-    git push origin main
+publish: 
+    rm -rf public
+    git clone git@github.com:gnagel/gnagel.github.io.git public
+
+    # Build the new version and publish if there are changes
+    hugo --destination ./public/ --baseURL=${HUGO_BASEURL}
+
+    cd ./public/; \
+        git add -A; \
+        git commit -am &amp;quot;Publish site $(DATE)&amp;quot; &amp;amp;&amp;amp; git push origin main
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;However, I found that while iterating on the build, I would see the Github Action&amp;rsquo;s fail if I was making changes but not publishing new content.&lt;/p&gt;
 &lt;p&gt;For example, while the template for this post has been generated with at golang CLI, the CLI itself is not part of the published blog&amp;rsquo;s contents.&lt;/p&gt;
@@ -72,16 +74,18 @@ publish: modules
 &lt;/ul&gt;
 &lt;p&gt;Using this I can update &lt;code&gt;make publish&lt;/code&gt; to streamline the workflow and only publish when there are content changes:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;publish:
-    # Stash any local changes, makes for quick turnaround with local development
-    bash -c &amp;quot;cd ./public/ &amp;amp;&amp;amp; git add -A &amp;amp;&amp;amp; git stash&amp;quot;
-    # Build the new version and publish if there are changes
-    hugo --destination ./public/
-    cd ./public/
-    git add -A
-    git status --porcelain
-    git diff --cached --exit-code &amp;gt; /dev/null || git commit -am &amp;quot;Publish site $(DATE)&amp;quot; &amp;amp;&amp;amp; git push origin main
+    rm -rf public
+    git clone git@github.com:gnagel/gnagel.github.io.git public
 
-    # ^^ Only publish the new version if there are changes
+    # Build the new version and publish if there are changes
+    hugo --destination ./public/ --baseURL=${HUGO_BASEURL}
+
+    cd ./public/; \
+        git add -A; \
+        git status --porcelain; \
+        git diff --cached --exit-code &amp;gt; /dev/null || git commit -am &amp;quot;Publish site $(DATE)&amp;quot; &amp;amp;&amp;amp; git push origin main
+
+        # ^^ Only publish the new version if there are changes
 &lt;/code&gt;&lt;/pre&gt;
 </description>
        </item>

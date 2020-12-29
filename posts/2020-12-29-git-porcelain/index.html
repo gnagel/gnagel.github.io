@@ -76,8 +76,7 @@
 
     
 
-    <h2 id="setting-up-a-new-blog">Setting up a new blog</h2>
-<p>For this blog I&rsquo;m using Github Pages for the hosting and to use the Github Actions for CI/CD and publish workflows.</p>
+    <p>For this blog I&rsquo;m using Github Pages for the hosting and to use the Github Actions for CI/CD and publish workflows.</p>
 <p>However, I quickly bumped into some annoying issues with Github Actions: non-content changes resulted in a failed build.</p>
 <p>At first my <code>Makefile</code> looked like this:</p>
 <ol>
@@ -100,7 +99,6 @@ setup:
 ## Hugo uses submodules for the themes, and I'll also use it for the publish workflows too
 modules:
     git config pull.rebase true
-    ls public 2&gt; /dev/null || git submodule add https://github.com/gnagel/gnagel.github.io.git public
     ls themes/kiera 2&gt; /dev/null || git submodule add https://github.com/avianto/hugo-kiera.git themes/kiera
     # ...
 
@@ -111,12 +109,16 @@ modules:
 dev: modules
     hugo server --port=1313
 
-publish: modules
-    hugo
-    cd public
-    git add -A
-    git commit -am &quot;Publish site $(DATE)&quot;
-    git push origin main
+publish: 
+    rm -rf public
+    git clone git@github.com:gnagel/gnagel.github.io.git public
+
+    # Build the new version and publish if there are changes
+    hugo --destination ./public/ --baseURL=${HUGO_BASEURL}
+
+    cd ./public/; \
+        git add -A; \
+        git commit -am &quot;Publish site $(DATE)&quot; &amp;&amp; git push origin main
 </code></pre>
 <p>However, I found that while iterating on the build, I would see the Github Action&rsquo;s fail if I was making changes but not publishing new content.</p>
 <p>For example, while the template for this post has been generated with at golang CLI, the CLI itself is not part of the published blog&rsquo;s contents.</p>
@@ -130,16 +132,18 @@ publish: modules
 </ul>
 <p>Using this I can update <code>make publish</code> to streamline the workflow and only publish when there are content changes:</p>
 <pre><code>publish:
-    # Stash any local changes, makes for quick turnaround with local development
-    bash -c &quot;cd ./public/ &amp;&amp; git add -A &amp;&amp; git stash&quot;
-    # Build the new version and publish if there are changes
-    hugo --destination ./public/
-    cd ./public/
-    git add -A
-    git status --porcelain
-    git diff --cached --exit-code &gt; /dev/null || git commit -am &quot;Publish site $(DATE)&quot; &amp;&amp; git push origin main
+    rm -rf public
+    git clone git@github.com:gnagel/gnagel.github.io.git public
 
-    # ^^ Only publish the new version if there are changes
+    # Build the new version and publish if there are changes
+    hugo --destination ./public/ --baseURL=${HUGO_BASEURL}
+
+    cd ./public/; \
+        git add -A; \
+        git status --porcelain; \
+        git diff --cached --exit-code &gt; /dev/null || git commit -am &quot;Publish site $(DATE)&quot; &amp;&amp; git push origin main
+
+        # ^^ Only publish the new version if there are changes
 </code></pre>
 
 
