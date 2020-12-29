@@ -2,22 +2,22 @@
    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
      <channel>
        <title>Posts on Glenn Nagel&#39;s Notes</title>
-       <link>http://gnagel.github.io/posts/</link>
+       <link>https://gnagel.github.io/posts/</link>
        <description>Recent content in Posts on Glenn Nagel&#39;s Notes</description>
        <generator>Hugo -- gohugo.io</generator>
        <language>en-us</language>
        <copyright>Copyright &amp;copy; 2020 - Glenn Nagel</copyright>
        <lastBuildDate>Tue, 29 Dec 2020 00:00:00 +0000</lastBuildDate>
        
-           <atom:link href="http://gnagel.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+           <atom:link href="https://gnagel.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
        
        
        <item>
          <title>Git porcelain</title>
-         <link>http://gnagel.github.io/posts/2020-12-29-git-porcelain/</link>
+         <link>https://gnagel.github.io/posts/2020-12-29-git-porcelain/</link>
          <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
          
-         <guid>http://gnagel.github.io/posts/2020-12-29-git-porcelain/</guid>
+         <guid>https://gnagel.github.io/posts/2020-12-29-git-porcelain/</guid>
          <description>&lt;h2 id=&#34;setting-up-a-new-blog&#34;&gt;Setting up a new blog&lt;/h2&gt;
 &lt;p&gt;For this blog I&amp;rsquo;m using Github Pages for the hosting and to use the Github Actions for CI/CD and publish workflows.&lt;/p&gt;
 &lt;p&gt;However, I quickly bumped into some annoying issues with Github Actions: non-content changes resulted in a failed build.&lt;/p&gt;
@@ -62,20 +62,24 @@ publish: modules
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;However, I found that while iterating on the build, I would see the Github Action&amp;rsquo;s fail if I was making changes but not publishing new content.&lt;/p&gt;
 &lt;p&gt;For example, while the template for this post has been generated with at golang CLI, the CLI itself is not part of the published blog&amp;rsquo;s contents.&lt;/p&gt;
-&lt;p&gt;So everytime I pushed a code change but not a content change would result in a build failure.&lt;/p&gt;
-&lt;h2 id=&#34;git-porcelain&#34;&gt;Git Porcelain&lt;/h2&gt;
-&lt;p&gt;Thankfully there&amp;rsquo;s a neat feature to &lt;code&gt;git status&lt;/code&gt; that allows me to short circut the workflow: &lt;code&gt;git status --porcelain&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;This command will return one of two status codes:&lt;/p&gt;
+&lt;h2 id=&#34;git-tricks&#34;&gt;Git Tricks&lt;/h2&gt;
+&lt;p&gt;Thankfully there are two a neat git tricks to see what&amp;rsquo;s changed and to short circut the build if there are no changes.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git status --porcelain&lt;/code&gt;: This command will print the changed files in a nice short format&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git diff --cached --exit-code&lt;/code&gt;: This command will fail if there are any staged files to be committed.  It will return one of two status codes&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;0 = no changes present&lt;/li&gt;
 &lt;li&gt;1 = changes in the foldr&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Using this I can update &lt;code&gt;make publish&lt;/code&gt; to streamline the workflow and only publish when there are content changes:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;publish: modules
-    hugo
-    cd public
+&lt;pre&gt;&lt;code&gt;publish:
+    # Stash any local changes, makes for quick turnaround with local development
+    bash -c &amp;quot;cd ./public/ &amp;amp;&amp;amp; git add -A &amp;amp;&amp;amp; git stash&amp;quot;
+    # Build the new version and publish if there are changes
+    hugo --destination ./public/
+    cd ./public/
     git add -A
-    git status --porcelain || git commit -am &amp;quot;Publish site $(DATE)&amp;quot; &amp;amp;&amp;amp; git push origin main
+    git status --porcelain
+    git diff --cached --exit-code &amp;gt; /dev/null || git commit -am &amp;quot;Publish site $(DATE)&amp;quot; &amp;amp;&amp;amp; git push origin main
 
     # ^^ Only publish the new version if there are changes
 &lt;/code&gt;&lt;/pre&gt;

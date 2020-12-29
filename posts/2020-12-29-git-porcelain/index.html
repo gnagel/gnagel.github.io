@@ -11,13 +11,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" />
   <script src="https://kit.fontawesome.com/b76b73e8e8.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
-  <link rel="stylesheet" type="text/css" href="http://gnagel.github.io/css/styles.css" /></head>
+  <link rel="stylesheet" type="text/css" href="https://gnagel.github.io/css/styles.css" /></head>
 
 <body>
   <div id="container">
     <header>
       <h1>
-                <a href="http://gnagel.github.io/">Glenn Nagel&rsquo;s Notes</a>
+                <a href="https://gnagel.github.io/">Glenn Nagel&rsquo;s Notes</a>
             </h1>
 
       <ul id="social-media">
@@ -37,13 +37,13 @@
     <ul>
         
         <li>
-            <a class="" href="http://gnagel.github.io/posts/">
+            <a class="" href="https://gnagel.github.io/posts/">
                 <i class="fa-li fa  fa-lg"></i><span>Posts</span>
             </a>
         </li>
         
         <li>
-            <a class="" href="http://gnagel.github.io/about/">
+            <a class="" href="https://gnagel.github.io/about/">
                 <i class="fa-li fa  fa-lg"></i><span>About</span>
             </a>
         </li>
@@ -120,20 +120,24 @@ publish: modules
 </code></pre>
 <p>However, I found that while iterating on the build, I would see the Github Action&rsquo;s fail if I was making changes but not publishing new content.</p>
 <p>For example, while the template for this post has been generated with at golang CLI, the CLI itself is not part of the published blog&rsquo;s contents.</p>
-<p>So everytime I pushed a code change but not a content change would result in a build failure.</p>
-<h2 id="git-porcelain">Git Porcelain</h2>
-<p>Thankfully there&rsquo;s a neat feature to <code>git status</code> that allows me to short circut the workflow: <code>git status --porcelain</code></p>
-<p>This command will return one of two status codes:</p>
+<h2 id="git-tricks">Git Tricks</h2>
+<p>Thankfully there are two a neat git tricks to see what&rsquo;s changed and to short circut the build if there are no changes.</p>
+<p><code>git status --porcelain</code>: This command will print the changed files in a nice short format</p>
+<p><code>git diff --cached --exit-code</code>: This command will fail if there are any staged files to be committed.  It will return one of two status codes</p>
 <ul>
 <li>0 = no changes present</li>
 <li>1 = changes in the foldr</li>
 </ul>
 <p>Using this I can update <code>make publish</code> to streamline the workflow and only publish when there are content changes:</p>
-<pre><code>publish: modules
-    hugo
-    cd public
+<pre><code>publish:
+    # Stash any local changes, makes for quick turnaround with local development
+    bash -c &quot;cd ./public/ &amp;&amp; git add -A &amp;&amp; git stash&quot;
+    # Build the new version and publish if there are changes
+    hugo --destination ./public/
+    cd ./public/
     git add -A
-    git status --porcelain || git commit -am &quot;Publish site $(DATE)&quot; &amp;&amp; git push origin main
+    git status --porcelain
+    git diff --cached --exit-code &gt; /dev/null || git commit -am &quot;Publish site $(DATE)&quot; &amp;&amp; git push origin main
 
     # ^^ Only publish the new version if there are changes
 </code></pre>
@@ -158,10 +162,10 @@ publish: modules
     <footer>
         <h6>Copyright © 2020 - Glenn Nagel |
             Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
-            <a href="http://gnagel.github.io/index.xml">Subscribe</a></h6>
+            <a href="https://gnagel.github.io/index.xml">Subscribe</a></h6>
     </footer>
 </div>
-<script src="http://gnagel.github.io/js/scripts.js"></script>
+<script src="https://gnagel.github.io/js/scripts.js"></script>
 
 </body>
 
