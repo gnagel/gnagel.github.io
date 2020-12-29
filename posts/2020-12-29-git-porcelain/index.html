@@ -1,0 +1,168 @@
+<!doctype html>
+
+<html lang="en-us">
+
+<head>
+  <title>Glenn Nagel&#39;s Notes</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="" /><meta name="generator" content="Hugo 0.79.1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" />
+  <script src="https://kit.fontawesome.com/b76b73e8e8.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="http://gnagel.github.io/css/styles.css" /></head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="http://gnagel.github.io/">Glenn Nagel&rsquo;s Notes</a>
+            </h1>
+
+      <ul id="social-media">
+        
+        
+          
+        <li><a href="https://github.com/gnagel"><i class="fab fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>A set of notes and interesting tools.</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="http://gnagel.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="http://gnagel.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Git porcelain</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2020-12-29T00:00:00Z">Dec 29, 2020</time>
+        </li>
+        
+
+        
+
+        <li>2 minutes read</li>
+    </ul>
+</aside>
+
+    
+
+    <h2 id="setting-up-a-new-blog">Setting up a new blog</h2>
+<p>For this blog I&rsquo;m using Github Pages for the hosting and to use the Github Actions for CI/CD and publish workflows.</p>
+<p>However, I quickly bumped into some annoying issues with Github Actions: non-content changes resulted in a failed build.</p>
+<p>At first my <code>Makefile</code> looked like this:</p>
+<ol>
+<li>setup: pre-commit hooks</li>
+<li>modules: setup the git submodules for themes and publishing</li>
+<li>dev: local development</li>
+<li>publish: publish new content for the blog</li>
+</ol>
+<p><strong>Makefile</strong></p>
+<pre><code>.PHONY: setup modules publish
+
+SITE_DOMAIN ?= gnagel.github.io
+
+## Install the tools we will need
+setup:
+    which pre-commit &gt; /dev.null &amp;&amp; brew upgrade pre-commit || brew install pre-commit
+    which hugo &gt; /dev.null &amp;&amp; brew upgrade hugo || brew install hugo
+    pre-commit install
+
+## Hugo uses submodules for the themes, and I'll also use it for the publish workflows too
+modules:
+    git config pull.rebase true
+    ls public 2&gt; /dev/null || git submodule add https://github.com/gnagel/gnagel.github.io.git public
+    ls themes/kiera 2&gt; /dev/null || git submodule add https://github.com/avianto/hugo-kiera.git themes/kiera
+    # ...
+
+#
+# Dev / Release workflow
+#
+
+dev: modules
+    hugo server --port=1313
+
+publish: modules
+    hugo
+    cd public
+    git add -A
+    git commit -am &quot;Publish site $(DATE)&quot;
+    git push origin main
+</code></pre>
+<p>However, I found that while iterating on the build, I would see the Github Action&rsquo;s fail if I was making changes but not publishing new content.</p>
+<p>For example, while the template for this post has been generated with at golang CLI, the CLI itself is not part of the published blog&rsquo;s contents.</p>
+<p>So everytime I pushed a code change but not a content change would result in a build failure.</p>
+<h2 id="git-porcelain">Git Porcelain</h2>
+<p>Thankfully there&rsquo;s a neat feature to <code>git status</code> that allows me to short circut the workflow: <code>git status --porcelain</code></p>
+<p>This command will return one of two status codes:</p>
+<ul>
+<li>0 = no changes present</li>
+<li>1 = changes in the foldr</li>
+</ul>
+<p>Using this I can update <code>make publish</code> to streamline the workflow and only publish when there are content changes:</p>
+<pre><code>publish: modules
+    hugo
+    cd public
+    git add -A
+    git status --porcelain || git commit -am &quot;Publish site $(DATE)&quot; &amp;&amp; git push origin main
+
+    # ^^ Only publish the new version if there are changes
+</code></pre>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright © 2020 - Glenn Nagel |
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="http://gnagel.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="http://gnagel.github.io/js/scripts.js"></script>
+
+</body>
+
+</html>
