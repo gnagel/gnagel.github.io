@@ -128,7 +128,7 @@ publish:
 <p><code>git diff --cached --exit-code</code>: This command will fail if there are any staged files to be committed.  It will return one of two status codes</p>
 <ul>
 <li>0 = no changes present</li>
-<li>1 = changes in the foldr</li>
+<li>1 = changes are present</li>
 </ul>
 <p>Using this I can update <code>make publish</code> to streamline the workflow and only publish when there are content changes:</p>
 <pre><code>publish:

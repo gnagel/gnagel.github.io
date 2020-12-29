@@ -70,7 +70,7 @@ publish:
 &lt;p&gt;&lt;code&gt;git diff --cached --exit-code&lt;/code&gt;: This command will fail if there are any staged files to be committed.  It will return one of two status codes&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;0 = no changes present&lt;/li&gt;
-&lt;li&gt;1 = changes in the foldr&lt;/li&gt;
+&lt;li&gt;1 = changes are present&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Using this I can update &lt;code&gt;make publish&lt;/code&gt; to streamline the workflow and only publish when there are content changes:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;publish:
