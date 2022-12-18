@@ -39,10 +39,10 @@ skill:
 experience:
   enable: true
   item:
-    - logo: https://res.cloudinary.com/samrobbins/image/upload/f_auto,q_auto/v1591793271/logos/logos_google_id6v9a.svg
-      title: init.g
-      company: Google
-      duration: November 2019
+    - logo: https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/b2mxl3ucb8dzy8pf790y
+      title: Bluecore
+      company: Bluecore LLC
+      duration: March 2018 - Present
 hackathons:
   enable: true
   item:
@@ -56,6 +56,7 @@ hackathons:
       url: https://medium.com/bluecore-engineering/running-a-successful-remote-hackathon-c782a5d21825
     - title: Hack Cambridge 2020, Q4
       description: Feature Gates in GKE, porting a high volume read heavy system to GKE
+      image: https://static-00.iconduck.com/assets.00/google-gke-icon-512x457-q6s0e3iu.png
       url: https://medium.com/bluecore-engineering/running-a-successful-remote-hackathon-c782a5d21825
 certifications:
   enable: false
