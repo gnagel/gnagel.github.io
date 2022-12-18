@@ -1,0 +1,83 @@
+---
+banner:
+  title: Hi! I'm Glenn Nagel
+social:
+  twitter: ""
+  linkedin: gnagel
+  github: gnagel
+  gitlab: ""
+  facebook: ""
+  instagram: ""
+  gmail: "glenn@8.codes"
+about:
+  enable: true
+  content: Professional Software Engineer
+  button:
+    btnText: Find out more
+    URL: "/about"
+skill:
+  enable: true
+  item:
+    - title: Golang
+      logo: https://cdn.dribbble.com/userupload/2624051/file/original-0c2e27a535ca15358be82cb68805de49.png?compress=1&resize=1600x1200
+      description: Professional Go developer, I'm currently focused on building async high volume event driven systems in Go with Google Cloud Platform
+    - title: Protobuf
+      logo: https://miro.medium.com/max/1400/1*sUG6wMZniIxMiuwJP5x60w.webp
+      description: Protobuf allows you create interface definitions around your data, creating a cross language contract for consistent and fast means of transporting data between your various services
+    - title: Google BigQuery
+      logo: https://www.gstatic.com/devrel-devsite/prod/vdbc400b97a86c8815ab6ee057e8dc91626aee8cf89b10f7d89037e5a33539f53/cloud/images/cloud-logo.svg
+      description: Details coming soon, contact me if you want to know more
+    - title: Google BigTable
+      logo: https://www.gstatic.com/devrel-devsite/prod/vdbc400b97a86c8815ab6ee057e8dc91626aee8cf89b10f7d89037e5a33539f53/cloud/images/cloud-logo.svg
+      description: Details coming soon, contact me if you want to know more
+    - title: Google Pub/Sub
+      logo: https://www.gstatic.com/devrel-devsite/prod/vdbc400b97a86c8815ab6ee057e8dc91626aee8cf89b10f7d89037e5a33539f53/cloud/images/cloud-logo.svg
+      description: Pub/Sub is a high volume event pipeline that allows you to move events through an asynchronous system very effectively with Protobuf, JSON or event text payloads
+    - title: Google Spanner
+      logo: https://www.gstatic.com/devrel-devsite/prod/vdbc400b97a86c8815ab6ee057e8dc91626aee8cf89b10f7d89037e5a33539f53/cloud/images/cloud-logo.svg
+      description: Spanner is a globally distributed ACID compliant SQL database
+experience:
+  enable: true
+  item:
+    - logo: https://res.cloudinary.com/samrobbins/image/upload/f_auto,q_auto/v1591793271/logos/logos_google_id6v9a.svg
+      title: init.g
+      company: Google
+      duration: November 2019
+hackathons:
+  enable: true
+  item:
+    - title: Hack Bluecore 2022
+      description: Mobile Msg Goes Global, how to build a Whats App bot for enterprise level ecommerce marketing
+      image: https://res.cloudinary.com/samrobbins/image/upload/f_auto,q_auto/v1591793405/stickers/Hack_Cambridge_101_ozoq5d.png
+      url: none
+    - title: Hack Bluecore 2021
+      description: Infra Engineer support, help build and deploy hackathon resources for rapid iteration
+      image: https://static-00.iconduck.com/assets.00/google-gke-icon-512x457-q6s0e3iu.png
+      url: https://medium.com/bluecore-engineering/running-a-successful-remote-hackathon-c782a5d21825
+    - title: Hack Cambridge 2020, Q4
+      description: Feature Gates in GKE, porting a high volume read heavy system to GKE
+      url: https://medium.com/bluecore-engineering/running-a-successful-remote-hackathon-c782a5d21825
+certifications:
+  enable: false
+#  item:
+#    - title: ""
+#      image: ""
+#      url: ""
+education:
+  enable: true
+  item:
+    - title: BS, Computer Science and Engineering
+      year: 2005
+      academy: University of Connecticut
+      image: https://logos-world.net/wp-content/uploads/2022/01/UConn-University-of-Connecticut-Logo.png
+leadership:
+  enable: false
+#  item:
+#    - logo: ""
+#      title: ""
+#      company: ""
+#      duration: ""
+#portfolio:
+#  filter:
+#    - label: ""
+#      value: ""
