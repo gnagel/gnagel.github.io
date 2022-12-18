@@ -48,7 +48,7 @@ hackathons:
   item:
     - title: Hack Bluecore 2022
       description: Mobile Msg Goes Global, how to build a Whats App bot for enterprise level ecommerce marketing
-      image: https://res.cloudinary.com/samrobbins/image/upload/f_auto,q_auto/v1591793405/stickers/Hack_Cambridge_101_ozoq5d.png
+      image: https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/plq330vyskdul9zc5tj6
       url: none
     - title: Hack Bluecore 2021
       description: Infra Engineer support, help build and deploy hackathon resources for rapid iteration
